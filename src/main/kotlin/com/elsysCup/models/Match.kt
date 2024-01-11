@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SingleMatch(
+    val matchID : String,
     val homePlayer : String,
     val awayPlayer : String,
     val deadLine : Long,
