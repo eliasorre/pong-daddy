@@ -19,3 +19,10 @@ data class SingleMatch(
 data class Matches(
     val matches : List<SingleMatch>
 )
+
+@Serializable
+data class RegisterScore(
+    val userRegistering : String,
+    val homePlayerScore : Int,
+    val awayPlayerScore : Int,
+)
