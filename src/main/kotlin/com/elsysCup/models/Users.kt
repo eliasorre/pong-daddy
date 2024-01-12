@@ -30,7 +30,9 @@ data class User(
     val email : String,
     val nickName : String,
     val name : String,
-    val lost : Int,
-    val won : Int,
-    val pointDifference : Int
+    val lost : Int = 0,
+    val won : Int = 0,
+    val pointDifference : Int = 0,
+    val skillLevelOwnEvaluation : Int,
+    val skillLevelCalculated : Int = 0
 )

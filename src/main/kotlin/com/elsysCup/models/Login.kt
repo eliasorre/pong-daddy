@@ -27,11 +27,12 @@ data class Login(
     val password : String
 )
 
-fun createValidToken(jwtConfig : JWT_Config, userEmail : String) : String? {
+fun createValidToken(jwtConfig : JWT_Config, userEmail : String, admin : Boolean) : String? {
         return JWT.create()
             .withAudience(jwtConfig.audience)
             .withIssuer(jwtConfig.issuer)
             .withClaim("userEmail", userEmail)
-            .withExpiresAt(Date(System.currentTimeMillis() + 60000))
+            .withClaim("admin", admin)
+            .withExpiresAt(Date(System.currentTimeMillis() + 60 * 1000 * 60))
             .sign(Algorithm.HMAC256(jwtConfig.secret))
 }

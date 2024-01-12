@@ -14,14 +14,14 @@ fun Route.authRoutes(loginDB: LoginDB, jwtConfig: JWT_Config) {
     post("/login") {
         val login = call.receive<Login>()
         if (!loginDB.checkLogin(login)) call.respond(HttpStatusCode.Unauthorized, "Invalid login")
-        val token = createValidToken(jwtConfig, login.email)
+        val token = createValidToken(jwtConfig, login.email, admin = false)
         call.respond(hashMapOf("token" to token))
     }
 
     post("/register") {
         val login = call.receive<Login>()
         loginDB.createLogin(login)
-        val token = createValidToken(jwtConfig, login.email)
+        val token = createValidToken(jwtConfig, login.email, admin = false)
         call.respond(hashMapOf("token" to token))
     }
 }
