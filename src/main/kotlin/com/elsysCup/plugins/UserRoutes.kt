@@ -10,25 +10,57 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+
 fun Route.userRoutes(userDB: UserDB) {
     authenticate("auth-jwt") {
         route("/user") {
-            // TODO: check if user already exists
+
+
+            // check if user already exists.
             post {
                 val newUser = call.receive<User>()
-                userDB.createUser(newUser)
-                call.respond(HttpStatusCode.OK)
+                if(!userDB.userExists(newUser)){
+                    if(userDB.createUser(newUser)){
+                        call.respond(HttpStatusCode.OK)
+                    }else{
+                        call.respond(HttpStatusCode.ExpectationFailed, "Unable to create user")
+                    }
+                } else {
+                    call.respond(HttpStatusCode.Conflict, "User with this email already exists")
+                }
             }
-            // TODO: Implement update
+
             put {
-                val existingUser = call.receive<User>()
+                // Get the current user version
+                val principal = call.principal<JWTPrincipal>()
+                val userEmail = principal!!.payload.getClaim("userEmail").asString()
+                val user      = userDB.getUserByEmail(userEmail)
+
+                //Get the updated user
+                val updatedUser = call.receive<User>()
+
+                if(user != null){
+                    if(userDB.updateUser(user, updatedUser)){
+                        call.respond(HttpStatusCode.OK)
+                    }else{
+                        call.respond(HttpStatusCode.NotModified, "Unable to update user")
+                    }
+                }else{
+                    call.respond(HttpStatusCode.NotFound, "User with this email does not exist")
+                }
             }
-            // TODO: Implement
+
             get {
                 val principal = call.principal<JWTPrincipal>()
                 val userEmail = principal!!.payload.getClaim("userEmail").asString()
-                // val user = User()
-                // call.respond(user)
+                val user      = userDB.getUserByEmail(userEmail)
+
+                if (user != null) {
+                    call.respond(user)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "User with this email does not exist")
+                }
+
             }
         }
     }
