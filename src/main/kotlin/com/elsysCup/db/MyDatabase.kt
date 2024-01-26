@@ -18,6 +18,10 @@ class MyDatabase(config: DatabaseConfig) {
         transaction{
             SchemaUtils.create(Users)
             SchemaUtils.create(LoginTable)
+
+            // Add any missing columns or tables
+            SchemaUtils.createMissingTablesAndColumns(Users)
+            SchemaUtils.createMissingTablesAndColumns(LoginTable)
         }
     }
 
